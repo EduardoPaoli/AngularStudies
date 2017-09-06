@@ -1,0 +1,90 @@
+<html ng-app="listaTelefonica">
+    <head>
+        <title>Lista Telefonica</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+        <style>
+            .jumbotron {
+                width: 400px;
+                text-align: center;
+                margin: 20px auto 0 auto;
+            }
+
+            table {
+                margin-top: 30px;
+            }
+
+            input {
+                margin-bottom: 5px;
+            }
+
+            .selecionado {
+                background-color: yellow;
+            }
+        </style>
+       <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script> -->
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.5/angular.min.js"></script>
+        <script>
+            angular.module('listaTelefonica', []);
+            angular.module('listaTelefonica').controller('listaTelefonicaCtrl', function($scope) {
+                $scope.app = "Lista Telefonica"
+                $scope.contatos = [
+                    {nome: "Pedro", telefone: "999998888"},
+                    {nome: "Ana",   telefone: "999998888"},
+                    {nome: "Maria", telefone: "999998888"}
+                ];
+                $scope.operadoras = [
+                    {nome: "Oi",   condigo: 14, categoria: "Celular"},
+                    {nome: "Vivo", condigo: 15, categoria: "Celular"},
+                    {nome: "Tim",  condigo: 41, categoria: "Celular"},
+                    {nome: "GVY",  condigo: 25, categoria: "Fixo"},
+                    {nome: "Embratel",  condigo: 21, categoria: "Fixo"}
+                ];
+                $scope.adicionarContato = function (contato) {
+                    $scope.contatos.push(angular.copy(contato));
+                    delete $scope.contato
+                }
+                $scope.apagarContato = function (contatos) {
+                    $scope.contatos = contatos.filter(function(contato) {
+                        if(!contato.selecionado) return contato;
+                    });
+                }
+                $scope.isContatoSelecionado = function(contatos) {
+                    var isSelecionado = contatos.some(function(contato) {
+                        return contato.selecionado
+                    })
+                }
+            });
+        </script>
+    </head>
+    <body ng-controller="listaTelefonicaCtrl">
+        <div class="jumbotron">
+            <h4>{{app}}</h4>
+            <table class="table">
+                <tr>
+                    <th></th>
+                    <th>Nome</th>
+                    <th>Telefone</th>
+                    <th>Operadora</th>                    
+                </tr>
+                <tr ng-class="{selecionado: contato.selecionado}" ng-repeat="contato in contatos">
+                    <td><input type="checkbox" ng-model="contato.selecionado"></td>
+                    <td>{{contato.nome}}</td>
+                    <td>{{contato.telefone}}</td>
+                    <td>{{contato.operadora.nome}}</td>
+                </tr>
+            </table>
+            <hr>
+            <form name="contatoForm">
+                <input type="text" ng-model="contato.nome" class="form-control" name="nome" placeholder="Nome" ng-required="true" />
+                <input type="text" ng-model="contato.telefone" class="form-control" name="telefone" placeholder="Telefone" ng-required="true" />
+                <select ng-model="contato.operadora" ng-options="operadora.nome for operadora in operadoras" class="form-control">
+                    <option value="">Selecione uma operadora</option>
+                </select><br />
+                <div ng-show="contatoForm.nome.$invalid" class="alert alert-danger">Por favor preencha o nome.</div>
+                <div ng-show="contatoForm.telefone.$invalid" class="alert alert-danger">Por favor preencha o telefone.</div>
+                <button ng-click="adicionarContato(contato)" ng-disabled="contatoForm.$invalid" class="btn btn-primary btn-block">Adicionar Contato</button>
+                <button ng-click="apagarContato(contatos)"  class="btn btn-danger btn-block">Apagar Contatos</button>            
+            </form>
+        </div>
+    </body>
+</html>
